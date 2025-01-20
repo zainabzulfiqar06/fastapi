@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  app:
+    image: python:3.10  
+    ports:
+      - "8000:8000"
+    env_file:  
+      - .env
+    working_dir: /app  
+    volumes:
+      - .:/app  
+    command: >
+      sh -c "pip install --no-cache-dir &&
+      uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload" -r requirements.txt"  
+             
+    depends_on:
+      - db
+  db:
+    image: postgres:latest
+    env_file:  
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}  
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}  
+      POSTGRES_DB: ${DB_NAME}  
+    volumes:
+      - db_data:/var/lib/postgresql/data  
+volumes:
+  db_data:  
+    
